@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block blockname %}
+
+<div class="login-container">
+    <form class="login-form" method="post">
+        {% csrf_token %}
+        <h2>Login</h2>
+
+        <style>
+            .message {
+                background-color: #d4edda;
+                color: #155724;
+                padding: 10px;
+                margin-bottom: 15px;
+                border: 1px solid #c3e6cb;
+                border-radius: 4px;
+            }
+            .hidden {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+       
+        <!-- Display success or error messages -->
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li class="message {{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    
+
+        <!-- Username Field -->
+        <div class="input-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+        </div>
+
+        <!-- Password Field -->
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+
+        <!-- Login Button -->
+        <button type="submit" class="login-btn">Login</button>
+
+        <!-- Optional: Link to reset password or sign-up -->
+         {% url 'signup' as url %}
+        <p class="signup-link">Don't have an account? <a href="{{url}}">Sign up</a></p>
+    </form>
+</div>
+</body>
+
+<script>
+    // Hide the success message after 5 seconds
+    setTimeout(function() {
+        let messages = document.querySelectorAll('.message');
+        messages.forEach(function(message) {
+            message.classList.add('hidden');
+        });
+    }, 5000);  // 5000 ms = 5 seconds
+</script>
+{% endblock %}

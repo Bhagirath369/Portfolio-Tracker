@@ -1,0 +1,260 @@
+
+
+html,body{
+    margin: 0%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+
+:root{
+
+     --text-gray: #3f4954;
+     --text-light:#686666da;
+     --bg-color:#0f0f0f;
+     --white:#ffffff;
+     --midnight:#104f55;
+
+
+--sky:linear-gradient(120deg,#a1c4fd 0%,#c2e9fb 100%);
+
+    --abel:'Abel',cursive;
+    --anton:'anton',cursive;
+    --lexend:'lexend_deca',cursive;
+    --josefin:'josefin_sans',cursive;
+    --livvic:'livvic',cursive;
+}
+
+
+/* ____________global variables______________ */
+a{
+    text-decoration: none;
+    color: var(--text-gray);
+}
+
+.flex-row{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+ul li{
+    list-style-type: none;
+}
+
+h1{
+    font-family: var(--lexend);
+    font-size: 2.6rem;
+}
+
+h3{
+    font-family: var(--abel);
+    font-size: 1.4rem;
+}
+h2{
+    font-family: var(--lexend);
+}
+
+button.btn{
+    border: none;
+    border-radius: 2rem;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    background: skyblue;
+    font-family: var(--livvic);
+    cursor: pointer;
+    color: black;
+    
+
+}
+
+span{
+    font-family: var(--abel);
+}
+.container{
+    margin: 0.5vw;
+}
+
+.text-gray{
+    color: var(--text-gray);
+}
+
+p{
+    font-family: var(--lexend);
+    color: var(--text-light);
+}
+
+/* ______x______global variables_____x_________ */
+
+
+/* ____________navbar______________ */
+.nav{
+    background: white;
+    padding: 0.2rem;
+    height: 0rem;
+    min-height: 9vh;
+    overflow: hidden;
+    transition: height 1s ease-in-out;
+    margin-bottom: 1rem;
+}
+
+
+.nav .nav-menu{
+    justify-content: space-between;
+}
+
+
+.nav .toggle-collapse{
+position: absolute;
+top: 0%;
+width: 90%;
+cursor: pointer;
+display: none;
+}
+
+.nav .toggle-collapse .toggle-icons{
+display: flex;
+justify-content: flex-end;
+padding: 1.7rem 0;}
+
+.collapse{
+    height: 30rem;
+}
+
+
+.nav .toggle-collapse .toggle-icons i{
+color: var(--text-gray);
+font-size: 1.3rem;
+
+
+}
+  .nav .nav-items{
+
+    display: flex;
+
+    margin: 0;
+
+}
+
+
+.nav .nav-items .nav-link{
+    padding: 1.6rem 1rem;
+    font-size: 1.1rem;
+    position: relative;
+    font-family:'abel',cursive
+}
+
+
+.nav .nav-items .nav-link:hover{
+    background-color: var(--midnight);
+
+}
+
+.nav .nav-items .nav-link:hover a{
+    color: var(--white);
+}
+
+
+
+
+
+
+.nav .nav-brand a {
+    font-size: 1.6rem;
+    display: block;
+    font-family: 'lexend_deca';
+
+    padding: 1rem 0;
+}
+
+
+.nav .social{
+    padding: 1.4rem 0;
+}
+
+.nav .social i{
+    padding: 0 .2rem;
+}
+.nav .social i:hover{
+    color: #a1c4cf;
+}
+
+.login-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;  /* Horizontally center */
+    align-items: center;
+}
+
+/* Form styling */
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.login-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+/* Input field styling */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.input-group input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Login button styling */
+.login-btn {
+    padding: 10px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Signup link */
+.signup-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.signup-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
