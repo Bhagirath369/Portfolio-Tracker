@@ -23,6 +23,13 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.signup, name = "signup"),
     path("login/", views.login, name = "login"),
-    path("home/", views.home, name = "home")
+    path("home/", views.home, name = "home"),
+    path('add/', views.add_portfolio, name='add_portfolio'),
+    path('portfolios/',views.portfolio, name = 'portfolio'),
+    path('portfolios/<int:portfolio_id>/', views.portfolio, name='portfolio'),
+    path('portfolios/<int:portfolio_id>/delete/', views.delete_portfolio, name='delete_portfolio'),
+    
+    # path('add/', views.add_portfolio, name='add_portfolio'),
+    # path('delete<int:portfolio_id>/', views.delete_portfolio, name='delete_portfolio'),
 
 ]

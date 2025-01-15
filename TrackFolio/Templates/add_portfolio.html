@@ -1,0 +1,130 @@
+                       
+<head>
+    <title>Add Portfolio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-container h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .btn-container {
+            text-align: center;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .form-container {
+            position: relative;
+            width: 300px;
+            margin: 0 auto;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .close-btn:hover {
+            color: #e63946;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Add Portfolio</h1>
+        <a href="{% url 'home' %}" class="close-btn" aria-label="Close form">X</a>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Portfolio Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter Portfolio Name" required>
+            </div>
+            <div class="form-group">
+                <label for="type">Portfolio Type</label>
+                <select id="type" name="type" required>
+                    <option value="" disabled selected>Select Type</option>
+                    <option value="individual">Individual</option>
+                    <option value="institutional">Institutional</option>
+                </select>
+            </div>
+            <div class="btn-container">
+                <button type="submit" class="btn">Confirm Create</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -78,14 +78,14 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'trackfolio_db',      # Your database name
-        'USER': 'trackfolio_user',    # Your PostgreSQL user
-        'PASSWORD': 'user',  # The password you set for PostgreSQL user
+        'USER': 'postgres',           #Your PostgreSQL user
+        'PASSWORD': 'user',   # The password you set for PostgreSQL user
         'HOST': 'localhost',          # Assuming PostgreSQL is running locally
         'PORT': '5432',               # Default PostgreSQL port
     }
 }
 
-    
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
