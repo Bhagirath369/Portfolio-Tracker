@@ -88,7 +88,7 @@ p{
 
 
 /* ____________navbar______________ */
-.nav{
+/* .nav{
     background: white;
     padding: 0.2rem;
     height: 0rem;
@@ -177,7 +177,7 @@ font-size: 1.3rem;
 }
 .nav .social i:hover{
     color: #a1c4cf;
-}
+} */
 
 .login-container {
     background-color: #fff;
