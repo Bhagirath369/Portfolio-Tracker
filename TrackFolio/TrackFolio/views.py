@@ -11,6 +11,7 @@ from django.shortcuts import render, redirect
 from django.db import connection
 from django.contrib import messages
 import bcrypt
+from django.http import HttpResponse
 
 # def home(request):
 #     if request.method == 'POST':
@@ -181,16 +182,29 @@ def add_portfolio(request):
     return render(request, 'add_portfolio.html')
 
 
+from django.shortcuts import render, redirect
+from django.db import connection
+
 def portfolio(request, portfolio_id):
     with connection.cursor() as cursor:
         cursor.execute("SELECT portfolio_id, name, type FROM portfolio WHERE portfolio_id = %s", [portfolio_id])
         portfolio = cursor.fetchone()  # Returns a single tuple (id, name, type) or None
 
+    with connection.cursor() as cursor2:
+        cursor2.execute("SELECT * FROM transaction WHERE portfolio_id = %s", [portfolio_id])
+        transactions = cursor2.fetchall()  # Returns a list of tuples (id, name, type) or None
+
     if not portfolio:
         return redirect('home')  # Redirect if portfolio does not exist
 
-    return render(request, 'portfolio.html', {'portfolio': portfolio})
-    
+    # Pass both 'portfolio' and 'transactions' inside a single dictionary
+    context = {
+        'portfolio': portfolio,
+        'transactions': transactions
+    }
+
+    return render(request, 'portfolio.html', context)
+
 
 def delete_portfolio(request, portfolio_id):
     with connection.cursor() as cursor:
@@ -200,7 +214,27 @@ def delete_portfolio(request, portfolio_id):
 
 
 
+def add_transaction(request, portfolio_id):
+    user_id = request.session.get('user_id')  # Assuming user ID is stored in session
+    if not user_id:
+        return redirect('login')
+
+    if request.method == "POST":
+        transaction_type = request.POST.get('type')
+        script = request.POST.get('stock')
+        quantity = int(request.POST.get('quantity'))
+        rate = float(request.POST.get('rate'))
+        transaction_date = request.POST.get('transaction_date')
+        with connection.cursor() as cursor:
+            cursor.execute('''INSERT INTO transaction (portfolio_id, transaction_date, script, transaction_type, quantity, rate, comision, dp_charge, net_ammount, cps)
+                            VALUES(%s,%s,%s,%s,%s,%s,0,0,0,0)''',[portfolio_id, transaction_date, script, transaction_type,quantity, rate])
+        return redirect('portfolio',portfolio_id)   
+    context = {'portfolio_id' : portfolio_id}    #context part of render function cannot pass integer but only dictionary.
+    return render(request, 'add_transaction.html', context=context)
 
 
+def delete_transaction(request, portfolio_id, transaction_id):
+    with connection.cursor() as cursor:
+        cursor.execute("DELETE FROM transaction WHERE portfolio_id = %s and transaction_id = %s", [portfolio_id, transaction_id])
 
-
+    return redirect('portfolio', portfolio_id)  # Redirect to the list view
