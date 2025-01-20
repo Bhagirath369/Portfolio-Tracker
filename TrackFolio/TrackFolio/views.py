@@ -229,8 +229,17 @@ def add_transaction(request, portfolio_id):
             cursor.execute('''INSERT INTO transaction (portfolio_id, transaction_date, script, transaction_type, quantity, rate, comision, dp_charge, net_ammount, cps)
                             VALUES(%s,%s,%s,%s,%s,%s,0,0,0,0)''',[portfolio_id, transaction_date, script, transaction_type,quantity, rate])
         return redirect('portfolio',portfolio_id)   
-    context = {'portfolio_id' : portfolio_id}    #context part of render function cannot pass integer but only dictionary.
+    
+
+    # views for rendering stock name from live data in template addtransaction.html
+
+    from .livedata import fetch_live_stock_data  # Import the scraping function
+    stocks = fetch_live_stock_data()  # Fetch the live stock data
+    context = {'portfolio_id' : portfolio_id, 'stocks' : stocks}    #context part of render function cannot pass integer but only dictionary.
+
     return render(request, 'add_transaction.html', context=context)
+
+   
 
 
 def delete_transaction(request, portfolio_id, transaction_id):
@@ -238,3 +247,5 @@ def delete_transaction(request, portfolio_id, transaction_id):
         cursor.execute("DELETE FROM transaction WHERE portfolio_id = %s and transaction_id = %s", [portfolio_id, transaction_id])
 
     return redirect('portfolio', portfolio_id)  # Redirect to the list view
+
+
