@@ -107,10 +107,22 @@
                     <option value="Sell">Sell</option>
                 </select>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label for="stock">Select Stock</label>
-                <select id="stock" name="stock" required>
-                    <option value="" disabled selected>Select Stock</option>
+                <select id="stock" name="stock" required> -->
+
+            <div class="form-group">
+                        <label for="stock">Select Stock</label>
+                        <input list="stocks" id="stock" name="stock" required placeholder="Select Stock" />
+                        <datalist id="stocks">
+                            {% for stock in stocks %}
+                                <option value="{{ stock.stock_symbol }}">{{ stock.stock_name }}</option>
+                            {% endfor %}
+                        </datalist>
+            </div>
+                    
+
+                    <!-- <option value="" disabled selected>Select Stock</option>
                     <option value="GMFBS">GMFBS</option>
                     <option value="PRVU">PRVU</option>
                     <option value="ILI">ILI</option>
@@ -118,9 +130,15 @@
                     <option value="GILB">GILB</option>
                     <option value="SINDHU">SINDHU</option>
                     <option value="SAPDBL">SAPDBL</option>
-                    <option value="CGH">CGH</option>
-                </select>
-            </div>
+                    <option value="CGH">CGH</option> -->
+
+                    <!-- <option value="" disabled selected>Select Stock</option>
+            {% for stock in stocks %}
+                <option value="{{ stock.stock_symbol }}">{{ stock.stock_name }}</option>
+            {% endfor %}
+
+                </select> -->
+            <!-- </div> -->
             <div class="form-group">
                 <label for="quantity">Quantity</label>
                 <input type="number" id="quantity" name="quantity" min="1" required>
