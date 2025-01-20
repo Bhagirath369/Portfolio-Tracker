@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add Transaction</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .close-btn {
+            float: right;
+            text-decoration: none;
+            font-size: 20px;
+            color: #888;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        input, select {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .btn-container {
+            text-align: center;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Add Transaction</h1>
+        <a href="{% url 'portfolio' portfolio_id %}" class="close-btn" aria-label="Close form">X</a>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="type">Transaction Type</label>
+                <select id="type" name="type" required>
+                    <option value="" disabled selected>Select Type</option>
+                    <option value="IPO">IPO</option>
+                    <option value="FPO">FPO</option>
+                    <option value="Right">Right</option>
+                    <option value="Bonus">Bonus</option>
+                    <option value="Auction">Auction</option>
+                    <option value="Dividend">Dividend</option>
+                    <option value="Buy">Secondary Buy</option>
+                    <option value="Sell">Sell</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="stock">Select Stock</label>
+                <select id="stock" name="stock" required>
+                    <option value="" disabled selected>Select Stock</option>
+                    <option value="GMFBS">GMFBS</option>
+                    <option value="PRVU">PRVU</option>
+                    <option value="ILI">ILI</option>
+                    <option value="SAHAS">SAHAS</option>
+                    <option value="GILB">GILB</option>
+                    <option value="SINDHU">SINDHU</option>
+                    <option value="SAPDBL">SAPDBL</option>
+                    <option value="CGH">CGH</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" name="quantity" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="rate">Rate</label>
+                <input type="number" id="rate" name="rate" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="transactionDate">Transaction Date</label>
+                <input type="date" id="transactionDate" name="transaction_date" required>
+            </div>
+            <div class="btn-container">
+                <button type="submit" class="btn">Submit</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
