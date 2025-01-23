@@ -182,9 +182,6 @@ def add_portfolio(request):
     return render(request, 'add_portfolio.html')
 
 
-from django.shortcuts import render, redirect
-from django.db import connection
-
 def portfolio(request, portfolio_id):
     with connection.cursor() as cursor:
         cursor.execute("SELECT portfolio_id, name, type FROM portfolio WHERE portfolio_id = %s", [portfolio_id])
@@ -224,10 +221,39 @@ def add_transaction(request, portfolio_id):
         script = request.POST.get('stock')
         quantity = int(request.POST.get('quantity'))
         rate = float(request.POST.get('rate'))
+
+        #calculation cost ammount
+        ammount = quantity*rate
+
+        #calculation of broker commision on the basis of price : b_commision = broker commision
+        if ammount < 2500:
+            b_commision = 10
+        elif ammount > 2501 and ammount < 50000:
+            b_commision = 0.0036*ammount
+        elif ammount > 50001 and ammount < 500000:
+            b_commision = 0.0033 * ammount
+        elif ammount > 500001 and ammount < 2000001:
+            b_commision = 0.0031 * ammount
+        elif ammount > 2000001 and ammount < 10000000:
+            b_commision = 0.0027*ammount
+        else:
+            b_commision = 0.0024 * ammount
+
+        #calculation of sebon commision 0.15%
+        s_commision = 0.00015 * ammount
+        commision = b_commision + s_commision
+
+        dp_charge = 25                  #dp charge = 25 (always)
+
+        net_ammount = ammount + dp_charge + commision
+        
+        cps = net_ammount / quantity
+
         transaction_date = request.POST.get('transaction_date')
+
         with connection.cursor() as cursor:
             cursor.execute('''INSERT INTO transaction (portfolio_id, transaction_date, script, transaction_type, quantity, rate, comision, dp_charge, net_ammount, cps)
-                            VALUES(%s,%s,%s,%s,%s,%s,0,0,0,0)''',[portfolio_id, transaction_date, script, transaction_type,quantity, rate])
+                            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',[portfolio_id, transaction_date, script, transaction_type,quantity, rate, commision, dp_charge, net_ammount, cps])
         return redirect('portfolio',portfolio_id)   
     
 
@@ -248,4 +274,16 @@ def delete_transaction(request, portfolio_id, transaction_id):
 
     return redirect('portfolio', portfolio_id)  # Redirect to the list view
 
+def view_transaction(request, portfolio_id, transaction_id):
+    user_id = request.session.get('user_id')  # Assuming user ID is stored in session
+    if not user_id:
+        return redirect('login')
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM transaction WHERE portfolio_id = %s and transaction_id = %s", [portfolio_id, transaction_id])
+        transaction = cursor.fetchone()  # Returns a single tuple (id, name, type) or None
+    context = {
+        'portfolio_id': portfolio_id,
+        'transaction': transaction
+    }
+    return render(request, 'view_transaction.html', context=context)   #passing transaction to view_transaction.html 
 

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        main {
+            width: 40%;
+            max-width: 450px;
+            margin: 3rem auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            position: relative;
+        }
+
+        h1 {
+            margin-bottom: 1rem;
+            color: #0077b6;
+        }
+
+        .transaction-info {
+            margin-top: 0.5rem; /* Reduced gap between main and heading */
+        }
+
+        .transaction-info h2 {
+            margin-bottom: 1rem;
+            color: #0077b6;
+            display: flex;
+            justify-content: space-between; /* Align heading and close button */
+            align-items: center; /* Vertically center items */
+        }
+
+        .transaction-info div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            padding: 8px; /* Add padding for better spacing */
+            border-radius: 4px; /* Slightly rounded corners */
+        }
+
+        /* Alternate row colors */
+        .transaction-info div:nth-child(odd) {
+            background-color: #f9f9f9; /* Light gray for odd rows */
+        }
+
+        .transaction-info div:nth-child(even) {
+            background-color: #f0f0f0; /* Slightly darker gray for even rows */
+        }
+
+        .transaction-info div span {
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .transaction-info div span.label {
+            font-weight: bold;
+            text-align: left;
+            flex: 1;
+        }
+
+        .transaction-info div span.value {
+            text-align: right;
+            flex: 2;
+        }
+
+        .close-btn {
+            color: #000;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            margin-left: 1rem; /* Add some space between heading and close button */
+        }
+
+        .close-btn:hover {
+            color: red;
+        }
+    </style>
+    <!-- Add Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <main>
+        <section class="transaction-info">
+            <h2>Transaction Information
+                <a href="{% url 'home' %}" class="close-btn" aria-label="Close form">
+                    <i class="fa fa-close"></i> <!-- Font Awesome close icon -->
+                </a>
+            </h2>
+            <!-- Transaction details -->
+            <div>
+                <span class="label">Transaction ID:</span>
+                <span class="value">{{ transaction.0 }}</span>
+            </div>
+            <div>
+                <span class="label">Transaction Date:</span>
+                <span class="value">{{ transaction.2 }}</span>
+            </div>
+            <div>
+                <span class="label">Script:</span>
+                <span class="value">{{ transaction.3 }}</span>
+            </div>
+            <div>
+                <span class="label">Transaction Type:</span>
+                <span class="value">{{ transaction.4 }}</span>
+            </div>
+            <div>
+                <span class="label">Quantity:</span>
+                <span class="value">{{ transaction.5 }}</span>
+            </div>
+            <div>
+                <span class="label">Rate:</span>
+                <span class="value">{{ transaction.6 }}</span>
+            </div>
+            <div>
+                <span class="label">Commission:</span>
+                <span class="value">{{ transaction.7 }}</span>
+            </div>
+            <div>
+                <span class="label">DP Charge:</span>
+                <span class="value">{{ transaction.8 }}</span>
+            </div>
+            <div>
+                <span class="label">Net Amount:</span>
+                <span class="value"><strong>{{ transaction.9 }}</strong></span>
+            </div>
+            <div>
+                <span class="label">Cost Per Share</span>
+                <span class="value">{{ transaction.10 }}</span>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
