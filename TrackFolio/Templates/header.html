@@ -1,199 +1,243 @@
 {% load static %}
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Portfolio Bank</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <link rel="stylesheet" href="{% static 'style.css' %}">
-        <style>
-            /* General Reset */
-            body, ul {
-                margin: 0;
-                padding: 0;
-                list-style: none;
-                box-sizing: border-box;
-                font-family: 'Arial', sans-serif;
-            }
-    
-            /* Navigation Bar */
-            .nav {
-                background-color: #e3f2fd; /* Light blue background */
-                color: #01579b; /* Dark blue text */
-                padding: 0.8rem 2rem;
-                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-                position: sticky;
-                top: 0;
-                z-index: 1000;
-            }
-    
-            /* Flex Container */
-            .nav-menu {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-    
-            /* Brand with Logo */
-            .nav-brand {
-                display: flex;
-                align-items: center;
-            }
-    
-            .logo-container {
-                display: flex;
-                align-items: center;
-                text-decoration: none;
-                color: #01579b;
-                font-size: 1.8rem;
-                font-weight: bold;
-            }
-    
-            .logo {
-                height: 60px; /* Adjust logo height */
-                margin-right: 10px; /* Space between logo and text */
-            }
-    
-            /* Navigation Items */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <style>
+        /* General Reset */
+        body, ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Navigation Bar */
+        .nav {
+            background-color: #e3f2fd; /* Light blue background */
+            color: #01579b; /* Dark blue text */
+            padding: 0.8rem 2rem;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* Flex Container */
+        .nav-menu {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Brand with Logo */
+        .nav-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #01579b;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .logo {
+            height: 60px; /* Adjust logo height */
+            margin-right: 10px; /* Space between logo and text */
+        }
+
+        /* Navigation Items */
+        .nav-items {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link a {
+            position: relative;
+            color: #01579b;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+
+        .nav-link a:hover {
+            color: #0288d1; /* Slightly brighter blue on hover */
+        }
+
+        /* Hover underline effect */
+        .nav-link a::after {
+            content: "";
+            width: 0%;
+            height: 2px;
+            display: block;
+            margin: auto;
+            transition: 0.5s;
+        }
+
+        .nav-link a:hover::after {
+            background: #0288d1;
+            width: 100%; /* Expand underline to the full length of the text */
+        }
+
+        /* Social Icons */
+        .social {
+            display: flex;
+            align-items: center;
+        }
+
+        .social a {
+            color: #01579b;
+            font-size: 1.2rem;
+            margin-left: 1rem;
+            transition: color 0.3s;
+        }
+
+        .social a:hover {
+            color: #0288d1;
+        }
+
+        /* User Profile Icon */
+        .profile-icon {
+            margin-left: 1rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .profile-icon i {
+            font-size: 1.5rem;
+            color: #01579b;
+            transition: color 0.3s;
+        }
+
+        .profile-icon i:hover {
+            color: #0288d1;
+        }
+
+        /* Dropdown Container */
+        .profile-icon {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        /* Dropdown Content (Hidden by Default) */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #fff;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 5px;
+            padding: 0.5rem;
+        }
+
+        /* Dropdown Links */
+        .dropdown-content span,
+        .dropdown-content a {
+            color: #01579b;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            display: block;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #e3f2fd; /* Light blue background on hover */
+            border-radius: 5px;
+        }
+
+        /* Show Dropdown on Hover */
+        .profile-icon:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
             .nav-items {
-                display: flex;
-                gap: 2rem;
+                display: none;
             }
 
-            .nav-link a {
-                position: relative;
-                color: #01579b;
-                text-decoration: none;
-                font-size: 1rem;
-                transition: color 0.3s;
-            }
-
-            .nav-link a:hover {
-                color: #0288d1; /* Slightly brighter blue on hover */
-            }
-
-            /* Hover underline effect */
-            .nav-link a::after {
-                content: "";
-                width: 0%;
-                height: 2px;
+            .toggle-collapse {
                 display: block;
-                margin: auto;
-                transition: 0.5s;
             }
 
-            .nav-link a:hover::after {
-                background: #0288d1;
-                width: 100%; /* Expand underline to the full length of the text */
-            }
-
-    
-            /* Social Icons */
-            .social {
-                display: flex;
-                align-items: center;
-            }
-    
-            .social a {
-                color: #01579b;
-                font-size: 1.2rem;
-                margin-left: 1rem;
-                transition: color 0.3s;
-            }
-    
-            .social a:hover {
-                color: #0288d1;
-            }
-    
-            /* User Profile Icon */
-            .profile-icon {
-                margin-left: 1rem;
-                position: relative;
-                display: flex;
-                align-items: center;
-                cursor: pointer;
-            }
-    
-            .profile-icon i {
+            .toggle-icons {
                 font-size: 1.5rem;
                 color: #01579b;
-                transition: color 0.3s;
+                cursor: pointer;
             }
-    
-            .profile-icon i:hover {
-                color: #0288d1;
+
+            .nav.active .nav-items {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                right: 20px;
+                background-color: #e3f2fd;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+                border-radius: 5px;
+                padding: 1rem;
             }
-    
-            /* Responsive Design */
-            @media screen and (max-width: 768px) {
-                .nav-items {
-                    display: none;
-                }
-    
-                .toggle-collapse {
-                    display: block;
-                }
-    
-                .toggle-icons {
-                    font-size: 1.5rem;
-                    color: #01579b;
-                    cursor: pointer;
-                }
-    
-                .nav.active .nav-items {
-                    display: flex;
-                    flex-direction: column;
-                    position: absolute;
-                    top: 60px;
-                    right: 20px;
-                    background-color: #e3f2fd;
-                    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-                    border-radius: 5px;
-                    padding: 1rem;
-                }
-    
-                .nav-items li {
-                    margin-bottom: 1rem;
-                }
+
+            .nav-items li {
+                margin-bottom: 1rem;
             }
-        </style>
-    </head>
-    <body>
-        <!-- Navigation Menu -->
-        <nav class="nav">
-            <div class="nav-menu flex-row">
-                <!-- Brand with Logo -->
-                <div class="nav-brand">
-                    <a href="#" class="text-gray logo-container">
-                        <img src="{% static 'image/logo.png' %}" alt="TrackFolio Logo" class="logo">
-                        TrackFolio
-                    </a>
-                </div>
-                
-                <!-- Navigation Items -->
-                <div>
-                    <ul class="nav-items">
-                        <li class="nav-link"><a href="{% url 'home' %}">Home</a></li>
-                        <li class="nav-link"><a href="#">Services</a></li>
-                        <li class="nav-link"><a href="#">Archive</a></li>
-                        <li class="nav-link"><a href="#">Contact Us</a></li>
-                        <li class="nav-link"><a href="#">About Us</a></li>
-                    </ul>
-                </div>
-                <!-- Social Icons and Profile Icon -->
-                <div class="social text-gray">
-                    <a href="https://www.facebook.com"><i class="fab fa-facebook"></i></a>
-                    <a href="https://www.instagram.com"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.x.com"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.youtube.com"><i class="fab fa-youtube"></i></a>
-                    <div class="profile-icon">
-                        <i class="fas fa-user-circle"></i>
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Menu -->
+    <nav class="nav">
+        <div class="nav-menu flex-row">
+            <!-- Brand with Logo -->
+            <div class="nav-brand">
+                <a href="#" class="text-gray logo-container">
+                    <img src="{% static 'image/logo.png' %}" alt="TrackFolio Logo" class="logo">
+                    TrackFolio
+                </a>
+            </div>
+            
+            <!-- Navigation Items -->
+            <div>
+                <ul class="nav-items">
+                    <li class="nav-link"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="nav-link"><a href="#">Services</a></li>
+                    <li class="nav-link"><a href="#">Archive</a></li>
+                    <li class="nav-link"><a href="#">Contact Us</a></li>
+                    <li class="nav-link"><a href="#">About Us</a></li>
+                </ul>
+            </div>
+            <!-- Social Icons and Profile Icon -->
+            <div class="social text-gray">
+                <a href="https://www.facebook.com"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.x.com"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.youtube.com"><i class="fab fa-youtube"></i></a>
+                <div class="profile-icon">
+                    <i class="fas fa-user-circle"></i>
+                    <!-- Dropdown Content -->
+                    <div class="dropdown-content">
+                        <span>{{ user.username }}</span> <!-- Display username -->
+                        <a href="{% url 'home' %}">Logout</a> <!-- Logout option -->
                     </div>
                 </div>
             </div>
-        </nav>
-    </body>
-    </html>
-    
+        </div>
+    </nav>
+</body>
+</html>

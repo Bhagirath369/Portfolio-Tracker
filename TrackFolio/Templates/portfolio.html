@@ -22,8 +22,28 @@
         /* Heading Styles */
         h2 {
             color: #333;
-            text-align: left;
+            text-align: center;
             margin-bottom: 20px;
+        }
+
+        /* Flexbox layout for Portfolio Summary and Sector Distribution */
+        .summary-section {
+            display: flex;
+            gap: 20px; /* Space between the two sections */
+            margin-bottom: 2rem;
+        }
+
+        .summary-section > div {
+            flex: 1; /* Equal width for both sections */
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-section h3 {
+            color: #0077b6;
+            margin-bottom: 1rem;
         }
 
         .actions {
@@ -38,6 +58,12 @@
             font-size: 1rem;
             border-radius: 5px;
             transition: background-color 0.3s ease;
+        }
+        .actions h2 {
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between; /* Align heading and close button */
+            align-items: center; /
         }
         .actions .btn:hover {
             background-color: #005f87;
@@ -85,26 +111,49 @@
             color: red;
         }
 
-        
-
         /* Responsive design */
         @media screen and (max-width: 768px) {
+            .summary-section {
+                flex-direction: column; /* Stack sections vertically on small screens */
+            }
+
             .transaction-table th:nth-child(n+4),
             .transaction-table td:nth-child(n+4) {
                 display: none; /* Hide columns 4 and onward */
             }
         }
-
     </style>
-    
 </head>
 <body>
     <div class="container">
         <h2>{{ portfolio.1 }}'s Portfolio</h2>
-        <div class="actions">
-            <a href="{% url 'add_transaction' portfolio.0 %}" class="btn">Add New Transaction</a>
+
+        <!-- Portfolio Summary and Sector Distribution Sections -->
+        <div class="summary-section">
+            <!-- Portfolio Summary -->
+            <div class="portfolio-summary">
+                <h3>Portfolio Summary</h3>
+                <p>Total Investments: $10,000</p>
+                <p>Current Value: $12,500</p>
+                <p>Profit/Loss: +$2,500</p>
+            </div>
+
+            <!-- Sector Distribution -->
+            <div class="sector-distribution">
+                <h3>Sector Distribution</h3>
+                <p>Technology: 40%</p>
+                <p>Healthcare: 25%</p>
+                <p>Finance: 20%</p>
+                <p>Others: 15%</p>
+            </div>
         </div>
-        <h2>Transactions</h2>
+
+        <div class="actions">
+            <h2>Transactions
+                <a href="{% url 'add_transaction' portfolio.0 %}" class="btn">Add New Transaction</a>
+            </h2>
+        </div>
+        
         <div class="transaction-table-container">
             <table class="transaction-table">
                 <thead>
@@ -129,7 +178,7 @@
                                 <td>{{ transaction.6 }}</td> <!-- Rate -->
                                 <td>{{ transaction.9 }}</td> <!-- Net Amount -->
                                 <td>
-                                    <a href="{% url 'home' %}" class="view-btn" title="View">
+                                    <a href="{% url 'view_transaction' portfolio.0 transaction.0 %}" class="view-btn" title="View">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                     <a href="{% url 'delete_transaction' portfolio.0 transaction.0 %}" class="delete-btn" title="Delete"
@@ -137,7 +186,6 @@
                                         <i class="fa fa-trash"></i>
                                     </a>
                                 </td>
-                                
                             </tr>
                         {% endfor %}
                     {% else %}
@@ -148,7 +196,6 @@
                 </tbody>
             </table>
         </div>
-
     </div>
 </body>
 {% endblock %}

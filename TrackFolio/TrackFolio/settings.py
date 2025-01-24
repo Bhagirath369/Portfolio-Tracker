@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'trackfolio_db',      # Your database name
         'USER': 'postgres',           #Your PostgreSQL user
-        'PASSWORD': 'Devendra@123',   # The password you set for PostgreSQL user
+        'PASSWORD': 'yourLocalPassword',   # The password you set for PostgreSQL user
         'HOST': 'localhost',          # Assuming PostgreSQL is running locally
         'PORT': '5432',               # Default PostgreSQL port
     }
