@@ -21,11 +21,11 @@ from TrackFolio import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", views.signup, name = "signup"),
+    path("", views.home, name = "home"),
+    path("signup/", views.signup, name = "signup"),
     path("login/", views.login, name = "login"),
-    path("home/", views.home, name = "home"),
+    path("dashboars/", views.dashboard, name = "dashboard"),
     path('add/', views.add_portfolio, name='add_portfolio'),
-    #path('portfolios/',views.portfolio, name = 'portfolio'),
     path('portfolio/<int:portfolio_id>/', views.portfolio, name='portfolio'),
     path('portfolio/<int:portfolio_id>/delete/', views.delete_portfolio, name='delete_portfolio'),
     path('portfolio/<int:portfolio_id>/add_transaction', views.add_transaction, name='add_transaction'),

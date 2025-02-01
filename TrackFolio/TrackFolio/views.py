@@ -1,77 +1,11 @@
-# # from django.shortcuts import render
-
-
-# # def home(request):
-# #     return render(request, "signup.html")
-
-# # def login(request):
-# #     return render(request, "login.html")
-
 from django.shortcuts import render, redirect
 from django.db import connection
 from django.contrib import messages
 import bcrypt
 from django.http import HttpResponse
 
-# def home(request):
-#     if request.method == 'POST':
-#         username = request.POST['username']
-#         email = request.POST['email']
-#         password = request.POST['password']
-#         confirm_password = request.POST['confirm_password']
-
-#         if password != confirm_password:
-#             messages.error(request, "Passwords do not match.")
-#             return redirect('signup')
-
-#         # Encrypt password using bcrypt
-#         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-
-#         # Check if the username or email already exists
-#         with connection.cursor() as cursor:
-#             cursor.execute("SELECT * FROM users WHERE username=%s OR email=%s", [username, email])
-#             user = cursor.fetchone()
-
-#             if user:
-#                 messages.error(request, "Username or email already exists.")
-#                 return redirect('signup')
-
-#             # Insert new user into the database
-#             cursor.execute("INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
-#                            [username, email, hashed_password])
-
-#         messages.success(request, "Account created successfully.")
-#         return redirect('login')
-
-#     return render(request, 'signup.html')
-
-
-
-# def login(request):
-#     if request.method == 'POST':
-#         username = request.POST['username']
-#         password = request.POST['password']
-
-#         # Check if the user exists in the database
-#         with connection.cursor() as cursor:
-#             cursor.execute("SELECT * FROM users WHERE username=%s", [username])
-#             user = cursor.fetchone()
-
-#             if user and bcrypt.checkpw(password.encode('utf-8'), user[3].encode('utf-8')):
-#                 # Password matches, set session data
-#                 request.session['user_id'] = user[0]
-#                 messages.success(request, "Login successful.")
-#                 return redirect('dashboard')
-#             else:
-#                 messages.error(request, "Invalid username or password.")
-#                 return redirect('login')
-
-#     return render(request, 'login.html')
-
-from django.shortcuts import render, redirect
-from django.db import connection
-from django.contrib import messages
-import bcrypt
+def home(request):
+    return render (request, 'home.html')
 
 def signup(request):
     if request.method == 'POST':
@@ -120,7 +54,7 @@ def login(request):
                 if bcrypt.checkpw(password.encode('utf-8'), user[3].encode('utf-8')):
                     request.session['user_id'] = user[0]
                     # messages.success(request, "Login successful.")
-                    return redirect('home')
+                    return redirect('dashboard')
                 else:
                     messages.error(request, "Invalid username or password.")
             else:
@@ -132,14 +66,7 @@ def login(request):
 
 
 
-def home(request):
-    # if 'user_id' not in request.session:
-    #      # If the user is not logged in, redirect to login page
-    #      return redirect('login')
-
-    # Otherwise, render the home page
-    #return render(request, 'home.html')
-
+def dashboard(request):
     user_id = request.session.get('user_id')  # Assuming user ID is stored in session
     if not user_id:
         return redirect('login')
@@ -151,7 +78,7 @@ def home(request):
         """, [user_id])
         portfolios = cursor.fetchall()  # Returns a list of tuples (portfolio_id, name)
 
-    return render(request, 'home.html', {'portfolios': portfolios})
+    return render(request, 'dashboard.html', {'portfolios': portfolios})
 
 
 def add_portfolio(request):
@@ -177,7 +104,7 @@ def add_portfolio(request):
                 VALUES (%s, %s, 0, 0, 0, 0, 0, 0, %s)
             """, [user_id, name, portfolio_type])
 
-        return redirect('home')  # Redirect to the dashboard after successful creation
+        return redirect('dashboard')  # Redirect to the dashboard after successful creation
 
     return render(request, 'add_portfolio.html')
 
@@ -207,7 +134,7 @@ def delete_portfolio(request, portfolio_id):
     with connection.cursor() as cursor:
         cursor.execute("DELETE FROM portfolio WHERE portfolio_id = %s", [portfolio_id])
 
-    return redirect('home')  # Redirect to the list view
+    return redirect('dashboard')  # Redirect to the list view
 
 
 
@@ -215,7 +142,7 @@ def add_transaction(request, portfolio_id):
     user_id = request.session.get('user_id')  # Assuming user ID is stored in session
     if not user_id:
         return redirect('login')
-
+    print(f"request method is {request.method}")
     if request.method == "POST":
         transaction_type = request.POST.get('type')
         script = request.POST.get('stock')
@@ -254,8 +181,9 @@ def add_transaction(request, portfolio_id):
         with connection.cursor() as cursor:
             cursor.execute('''INSERT INTO transaction (portfolio_id, transaction_date, script, transaction_type, quantity, rate, comision, dp_charge, net_ammount, cps)
                             VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',[portfolio_id, transaction_date, script, transaction_type,quantity, rate, commision, dp_charge, net_ammount, cps])
-        return redirect('portfolio',portfolio_id)   
-    
+        return redirect('portfolio',portfolio_id) 
+        
+
 
     # views for rendering stock name from live data in template addtransaction.html
 
