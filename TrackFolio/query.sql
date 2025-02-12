@@ -142,3 +142,16 @@ CREATE TRIGGER transaction_after_delete
 AFTER DELETE ON transaction
 FOR EACH ROW
 EXECUTE FUNCTION recalculate_holding_after_delete();
+
+-- table for live_stocks data in db
+CREATE TABLE live_stocks (
+    id SERIAL PRIMARY KEY,
+    stock_symbol VARCHAR(10) NOT NULL UNIQUE,
+    stock_name VARCHAR(100) NOT NULL,
+    ltp NUMERIC,
+    percent_change NUMERIC,
+    open_price NUMERIC,
+    high_price NUMERIC,
+    low_price NUMERIC
+);
+
