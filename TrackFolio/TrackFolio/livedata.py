@@ -38,8 +38,8 @@ def insert_data_into_db(stocks):
         connection = psycopg2.connect(
             host="localhost",    
             database="trackfolio_db",  
-            user="trackfolio_user",   
-            password="user"
+            user="postgres",   
+            password="Devendra@123"
         )
         cursor = connection.cursor()
 

@@ -29,6 +29,7 @@ urlpatterns = [
     path('portfolio/<int:portfolio_id>/', views.portfolio, name='portfolio'),
     path('portfolio/<int:portfolio_id>/delete/', views.delete_portfolio, name='delete_portfolio'),
     path('portfolio/<int:portfolio_id>/add_transaction', views.add_transaction, name='add_transaction'),
+    path('portfolio/<int:portfolio_id>/error_display', views.error_display, name = "error_display"),
     path('portfolio/<int:portfolio_id>/<int:transaction_id>/delete_transaction/', views.delete_transaction, name='delete_transaction'),
     path('portfolio/<int:portfolio_id>/<int:transaction_id>/view_transaction/', views.view_transaction, name='view_transaction'),
 ]
