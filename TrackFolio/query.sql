@@ -46,7 +46,9 @@ create table holding (
     current_value numeric(50,2),
     today_profit_loss numeric(50,2),
     net_receivable_ammount numeric(50,2),
-	wacc numeric(10,2)
+	wacc numeric(10,2),
+    sold_value numeric(10,2),
+    realised_gain numeric(10,2)
 );
 
 -- table for live_stocks data in db
@@ -68,6 +70,8 @@ $$
 DECLARE 
     stock_ltp NUMERIC;
     stock_percent_change NUMERIC;
+    avg_wacc NUMERIC;
+    sell_realized_gain NUMERIC;
 BEGIN
     -- Fetch live stock data
     SELECT ltp, percent_change 
@@ -84,26 +88,39 @@ BEGIN
 
     -- Check if stock exists in holding
     IF EXISTS (SELECT 1 FROM holding WHERE portfolio_id = NEW.portfolio_id AND script = NEW.script) THEN
+        -- Fetch the weighted average cost per unit
+        SELECT wacc INTO avg_wacc
+        FROM holding 
+        WHERE portfolio_id = NEW.portfolio_id AND script = NEW.script;
+
+        -- Calculate the realized gain for sold stocks
+        IF NEW.transaction_type = 'SELL' THEN
+            sell_realized_gain := NEW.net_ammount - (NEW.quantity * avg_wacc);
+        ELSE
+            sell_realized_gain := 0;
+        END IF;
+
         -- Update existing record
         UPDATE holding
         SET 
             total_quantity = 
                 CASE 
                     WHEN NEW.transaction_type IN ('BUY', 'FPO', 'RIGHT', 'AUCTION', 'DIVIDENT', 'BONUS') THEN total_quantity + NEW.quantity
-                    WHEN NEW.transaction_type = 'SELL' THEN total_quantity - NEW.quantity
+                    WHEN NEW.transaction_type IN ('SELL') THEN total_quantity - NEW.quantity
                     ELSE total_quantity
                 END,
-            total_investment = total_investment + 
+            total_investment =
                 CASE 
-                    WHEN NEW.transaction_type IN ('BUY', 'FPO', 'RIGHT', 'AUCTION', 'DIVIDENT', 'BONUS') THEN NEW.net_ammount
-                    WHEN NEW.transaction_type = 'SELL' THEN -NEW.net_ammount
-                    ELSE 0
+                    WHEN NEW.transaction_type IN ('BUY', 'FPO', 'RIGHT', 'AUCTION', 'DIVIDENT', 'BONUS') THEN total_investment + NEW.net_ammount
+                    WHEN NEW.transaction_type IN ('SELL') THEN total_investment -- total investment does not change on selling
+                    ELSE total_investment
                 END,
-            sold_value = sold_value + 
+            sold_value = 
                 CASE 
-                    WHEN NEW.transaction_type = 'SELL' THEN NEW.net_ammount
-                    ELSE 0
+                    WHEN NEW.transaction_type IN ('SELL') THEN sold_value + NEW.net_ammount
+                    ELSE sold_value
                 END,
+            realized_gain = realized_gain + sell_realized_gain,
             ltp = stock_ltp
         WHERE portfolio_id = NEW.portfolio_id AND script = NEW.script;
 
@@ -112,8 +129,8 @@ BEGIN
         SET
             wacc = (total_investment / NULLIF(total_quantity, 0)),
             current_value = total_quantity * stock_ltp,
-            today_profit_loss = stock_percent_change * 0.01 * total_investment,
-            net_receivable_ammount = total_investment - sold_value
+            today_profit_loss = current_value - total_investment, -- Assumed P&L calculation
+            net_receivable_ammount = sold_value - total_investment
         WHERE portfolio_id = NEW.portfolio_id AND script = NEW.script;
 
         -- Remove if quantity becomes zero
@@ -124,7 +141,7 @@ BEGIN
     ELSE
         -- Insert new stock for valid transactions
         IF NEW.transaction_type IN ('IPO', 'BUY', 'FPO', 'RIGHT', 'AUCTION', 'DIVIDENT', 'BONUS') THEN
-            INSERT INTO holding (portfolio_id, script, sector, total_quantity, total_investment, wacc, ltp, current_value, today_profit_loss, net_receivable_ammount)
+            INSERT INTO holding (portfolio_id, script, sector, total_quantity, total_investment, wacc, ltp, current_value, today_profit_loss, net_receivable_ammount, sold_value, realized_gain)
             VALUES (
                 NEW.portfolio_id,
                 NEW.script,
@@ -134,8 +151,10 @@ BEGIN
                 NEW.net_ammount / NULLIF(NEW.quantity, 0),
                 stock_ltp,
                 NEW.quantity * stock_ltp,
-                (stock_percent_change * 0.01 * NEW.net_ammount),
-                NEW.quantity * stock_ltp
+                NULL, -- Cannot calculate today P&L initially
+                NEW.quantity * stock_ltp,
+                0,  -- Sold value initially 0
+                0   -- Realized gain initially 0
             );
         END IF;
     END IF;
@@ -143,6 +162,7 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
 
 
 --trigger to update holding table on addition of transaction
@@ -169,6 +189,7 @@ BEGIN
     ELSIF OLD.transaction_type = 'SELL' THEN
         UPDATE holding
         SET 
+            wacc = (total_investment / NULLIF(total_quantity, 0)),
             total_quantity = total_quantity + OLD.quantity,
             sold_value = sold_value - OLD.quantity
         WHERE portfolio_id = OLD.portfolio_id AND script = OLD.script;
