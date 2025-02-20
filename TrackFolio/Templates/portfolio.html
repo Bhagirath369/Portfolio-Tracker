@@ -126,26 +126,67 @@
 </head>
 <body>
     <div class="container">
-        <h2>{{ portfolio.1 }}'s Portfolio</h2>
+        <h2>{{ portfolio.2 }}'s Portfolio</h2>
 
         <!-- Portfolio Summary and Sector Distribution Sections -->
         <div class="summary-section">
             <!-- Portfolio Summary -->
             <div class="portfolio-summary">
                 <h3>Portfolio Summary</h3>
-                <p>Total Investments: $10,000</p>
-                <p>Current Value: $12,500</p>
-                <p>Profit/Loss: +$2,500</p>
+                <p>Total Investments: {{portfolio.3}}</p>
+                <p>Current Value: {{portfolio.4}}</p>
+                <p>Today Profit/Loss: {{portfolio.8}}</p>
+                <p>Realized Gain/Loss : {{portfolio.6}}</p>
+                <p>Sold Value : {{portfolio.5}}</p>
             </div>
 
             <!-- Sector Distribution -->
             <div class="sector-distribution">
-                <h3>Sector Distribution</h3>
+                <h3>Holding Distribution</h3>
                 <p>Technology: 40%</p>
                 <p>Healthcare: 25%</p>
                 <p>Finance: 20%</p>
                 <p>Others: 15%</p>
             </div>
+        </div>
+
+        <h2>Holdings</h2>
+
+        <div class="transaction-table-container">
+            <table class="transaction-table">
+                <thead>
+                    <tr>
+                        <th>Script</th>
+                        <th>Total Quantity</th>
+                        <th>Total Investment</th>
+                        <th>ltp</th>
+                        <th>Current Value</th>
+                        <th>Net Receivable Amount</th>
+                        <th>Today P&L</th>
+                        <th>Net Wacc</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if holdings %}
+                        {% for holding in holdings %}
+                            <tr>
+                                <td>{{ holding.2 }}</td> 
+                                <td>{{ holding.4 }}</td> 
+                                <td>{{ holding.5 }}</td> 
+                                <td>{{ holding.6 }}</td> 
+                                <td>{{ holding.7 }}</td> 
+                                <td>{{ holding.9 }}</td>
+                                <td>{{ holding.8 }}</td>
+                                <td>{{ holding.10 }}</td> 
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="no-transactions">No Holdings found. Click "Add New Transaction" to create one.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
         </div>
 
         <div class="actions">

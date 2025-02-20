@@ -106,7 +106,7 @@
 <body>
     <div class="form-container">
         <h1>Add Portfolio</h1>
-        <a href="{% url 'home' %}" class="close-btn" aria-label="Close form">X</a>
+        <a href="{% url 'dashboard' %}" class="close-btn" aria-label="Close form">X</a>
         <form method="POST">
             {% csrf_token %}
             <div class="form-group">

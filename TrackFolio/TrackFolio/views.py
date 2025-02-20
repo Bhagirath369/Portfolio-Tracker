@@ -7,6 +7,9 @@ from django.http import HttpResponse
 def home(request):
     return render (request, 'home.html')
 
+def error_display(request):
+    return render(request, 'error_display.html')
+
 def signup(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -111,8 +114,12 @@ def add_portfolio(request):
 
 def portfolio(request, portfolio_id):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT portfolio_id, name, type FROM portfolio WHERE portfolio_id = %s", [portfolio_id])
+        cursor.execute("SELECT * FROM portfolio WHERE portfolio_id = %s", [portfolio_id])
         portfolio = cursor.fetchone()  # Returns a single tuple (id, name, type) or None
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM holding WHERE portfolio_id = %s", [portfolio_id])
+        holdings = cursor.fetchall()
 
     with connection.cursor() as cursor2:
         cursor2.execute("SELECT * FROM transaction WHERE portfolio_id = %s", [portfolio_id])
@@ -124,7 +131,8 @@ def portfolio(request, portfolio_id):
     # Pass both 'portfolio' and 'transactions' inside a single dictionary
     context = {
         'portfolio': portfolio,
-        'transactions': transactions
+        'transactions': transactions,
+        'holdings' : holdings
     }
 
     return render(request, 'portfolio.html', context)
@@ -132,6 +140,8 @@ def portfolio(request, portfolio_id):
 
 def delete_portfolio(request, portfolio_id):
     with connection.cursor() as cursor:
+        cursor.execute("DELETE FROM transaction WHERE portfolio_id = %s", [portfolio_id])
+        cursor.execute("DELETE FROM holding WHERE portfolio_id = %s", [portfolio_id])
         cursor.execute("DELETE FROM portfolio WHERE portfolio_id = %s", [portfolio_id])
 
     return redirect('dashboard')  # Redirect to the list view
@@ -142,12 +152,43 @@ def add_transaction(request, portfolio_id):
     user_id = request.session.get('user_id')  # Assuming user ID is stored in session
     if not user_id:
         return redirect('login')
-    print(f"request method is {request.method}")
+    
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT stock_id, script, total_quantity, wacc FROM holding")
+        holdings = cursor.fetchall()
+    
+    stocks = []  #initialization of array to store stocks data
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT stock_symbol, stock_name FROM live_stocks")
+        stocks = cursor.fetchall()
+
     if request.method == "POST":
         transaction_type = request.POST.get('type')
-        script = request.POST.get('stock')
+        add_script = request.POST.get('stock')
+        sell_script = request.POST.get('script')
         quantity = int(request.POST.get('quantity'))
-        rate = float(request.POST.get('rate'))
+
+        print(f"add_script = {add_script}")
+        print(f"sell_script = {sell_script}")
+
+        if transaction_type in (['IPO', 'FPO', 'RIGHT', 'AUCTION', 'DIVIDENT', 'BONUS']):
+            rate = 100       #fixing rate for 'IPO', 'FPO', 'RIGHT', 'AUCTION', 'DIVIDENT', 'BONUS'
+        else:
+            rate = float(request.POST.get('rate')) #otherwise get rate for other sell or buy options
+
+        if transaction_type == "SELL":
+            script = sell_script
+            if script is None:
+                print("Error1: not valid sell transaction !!")
+                return render(request, 'error_display.html') 
+            for holding in holdings:
+                if holding[1] == script:  
+                    if quantity > holding[2]:  
+                        print("Error2: Not a valid sell transaction!")
+                        return redirect('error_display.html')
+            sold_value = quantity
+        else:
+            script = add_script
 
         #calculation cost ammount
         ammount = quantity*rate
@@ -181,15 +222,12 @@ def add_transaction(request, portfolio_id):
         with connection.cursor() as cursor:
             cursor.execute('''INSERT INTO transaction (portfolio_id, transaction_date, script, transaction_type, quantity, rate, comision, dp_charge, net_ammount, cps)
                             VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',[portfolio_id, transaction_date, script, transaction_type,quantity, rate, commision, dp_charge, net_ammount, cps])
-        return redirect('portfolio',portfolio_id) 
-        
+        messages.success(request, "Transaction added successfully!")
 
-
-    # views for rendering stock name from live data in template addtransaction.html
-
-    from .livedata import fetch_live_stock_data  # Import the scraping function
-    stocks = fetch_live_stock_data()  # Fetch the live stock data
-    context = {'portfolio_id' : portfolio_id, 'stocks' : stocks}    #context part of render function cannot pass integer but only dictionary.
+    context = {
+        'portfolio_id' : portfolio_id,
+        'stocks' : stocks,
+        'holdings' : holdings}    #context part of render function cannot pass integer but only dictionary.
 
     return render(request, 'add_transaction.html', context=context)
 
