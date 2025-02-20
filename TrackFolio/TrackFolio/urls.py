@@ -24,6 +24,7 @@ urlpatterns = [
     path("", views.home, name = "home"),
     path("signup/", views.signup, name = "signup"),
     path("login/", views.login, name = "login"),
+    path("logout/", views.logout, name = "logout"),
     path("dashboards/", views.dashboard, name = "dashboard"),
     path('add/', views.add_portfolio, name='add_portfolio'),
     path('portfolio/<int:portfolio_id>/', views.portfolio, name='portfolio'),
