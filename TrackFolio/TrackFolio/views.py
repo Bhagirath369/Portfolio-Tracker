@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.db import connection
 from django.contrib import messages
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 import bcrypt
 from django.http import HttpResponse
 
@@ -67,8 +69,6 @@ def login(request):
     return render(request, 'login.html')
 
 
-
-
 def dashboard(request):
     user_id = request.session.get('user_id')  # Assuming user ID is stored in session
     if not user_id:
@@ -116,7 +116,6 @@ def portfolio(request, portfolio_id):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM portfolio WHERE portfolio_id = %s", [portfolio_id])
         portfolio = cursor.fetchone()  # Returns a single tuple (id, name, type) or None
-
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM holding WHERE portfolio_id = %s", [portfolio_id])
         holdings = cursor.fetchall()
@@ -231,8 +230,6 @@ def add_transaction(request, portfolio_id):
 
     return render(request, 'add_transaction.html', context=context)
 
-   
-
 
 def delete_transaction(request, portfolio_id, transaction_id):
     with connection.cursor() as cursor:
@@ -253,3 +250,6 @@ def view_transaction(request, portfolio_id, transaction_id):
     }
     return render(request, 'view_transaction.html', context=context)   #passing transaction to view_transaction.html 
 
+def logout_view(request):
+    logout(request)
+    return redirect('login')

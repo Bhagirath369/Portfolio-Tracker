@@ -1,4 +1,3 @@
-
 from bs4 import BeautifulSoup
 import requests
 import psycopg2
@@ -39,7 +38,7 @@ def insert_data_into_db(stocks):
             host="localhost",    
             database="trackfolio_db",  
             user="postgres",   
-            password="Devendra@123"
+            password="roshan123"
         )
         cursor = connection.cursor()
 
