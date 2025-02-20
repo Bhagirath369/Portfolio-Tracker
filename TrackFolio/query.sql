@@ -1,11 +1,11 @@
-create table users(
+create table if not exists users(
 	id serial primary key,
 	name varchar(150) not null,
 	email varchar(255) not null,
 	password varchar(255) not null
 );
 
-create table portfolio (
+create table if not exists portfolio (
 	portfolio_id serial primary key,
 	user_id int,
 	foreign key (user_id )references users(id),
@@ -19,7 +19,7 @@ create table portfolio (
 	type varchar(15) not null
 );
 
-CREATE TABLE transaction(
+CREATE TABLE if not exists transaction(
 	transaction_id SERIAL PRIMARY KEY,
 	portfolio_id INT,
 	FOREIGN KEY(portfolio_id) REFERENCES portfolio(portfolio_id),
@@ -34,7 +34,7 @@ CREATE TABLE transaction(
 	cps numeric(50,2)
 );
 
-create table holding (
+create table if not exists holding (
     stock_id serial primary key,
 	portfolio_id int, 
 	foreign key(portfolio_id) references portfolio(portfolio_id),
@@ -52,7 +52,7 @@ create table holding (
 );
 
 -- table for live_stocks data in db
-CREATE TABLE live_stocks (
+CREATE TABLE if not exists live_stocks (
     id SERIAL PRIMARY KEY,
     stock_symbol VARCHAR(10) NOT NULL UNIQUE,
     stock_name VARCHAR(100) NOT NULL,
@@ -120,7 +120,7 @@ BEGIN
                     WHEN NEW.transaction_type IN ('SELL') THEN sold_value + NEW.net_ammount
                     ELSE sold_value
                 END,
-            realized_gain = realized_gain + sell_realized_gain,
+            realised_gain = realised_gain + sell_realized_gain,
             ltp = stock_ltp
         WHERE portfolio_id = NEW.portfolio_id AND script = NEW.script;
 
@@ -141,7 +141,7 @@ BEGIN
     ELSE
         -- Insert new stock for valid transactions
         IF NEW.transaction_type IN ('IPO', 'BUY', 'FPO', 'RIGHT', 'AUCTION', 'DIVIDENT', 'BONUS') THEN
-            INSERT INTO holding (portfolio_id, script, sector, total_quantity, total_investment, wacc, ltp, current_value, today_profit_loss, net_receivable_ammount, sold_value, realized_gain)
+            INSERT INTO holding (portfolio_id, script, sector, total_quantity, total_investment, wacc, ltp, current_value, today_profit_loss, net_receivable_ammount, sold_value, realised_gain)
             VALUES (
                 NEW.portfolio_id,
                 NEW.script,
@@ -168,7 +168,7 @@ $$ LANGUAGE plpgsql;
 --trigger to update holding table on addition of transaction
 create trigger trg_to_update_holding 
 after insert on transaction
-for each row execute function update_holding_table()
+for each row execute function update_holding_table();
 
 
 --funcition to update holding table on deletion of transaction
@@ -223,8 +223,8 @@ BEGIN
             current_value = (SELECT COALESCE(SUM(current_value), 0) FROM holding WHERE portfolio_id = NEW.portfolio_id),
             today_gain_or_loss = (SELECT COALESCE(SUM(today_profit_loss), 0) FROM holding WHERE portfolio_id = NEW.portfolio_id),
             sold_value = (SELECT COALESCE(SUM(sold_value), 0) FROM holding WHERE portfolio_id = NEW.portfolio_id),
-            realized_gain = (
-                SELECT COALESCE(SUM(sold_value - (total_quantity * wacc)), 0)
+            realised_gain = (
+                SELECT COALESCE(SUM(ABS(sold_value - (total_quantity * wacc))), 0)
                 FROM holding
                 WHERE portfolio_id = NEW.portfolio_id
             )
