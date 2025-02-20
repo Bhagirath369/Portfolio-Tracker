@@ -228,14 +228,17 @@
                 <a href="https://www.instagram.com"><i class="fab fa-instagram"></i></a>
                 <a href="https://www.x.com"><i class="fab fa-twitter"></i></a>
                 <a href="https://www.youtube.com"><i class="fab fa-youtube"></i></a>
-                <div class="profile-icon">
-                    <i class="fas fa-user-circle"></i>
-                    <!-- Dropdown Content -->
-                    <div class="dropdown-content">
-                        <!-- <span>{{ user.username }}</span> Display username -->
-                        <a href="{% url 'home' %}">Logout</a> <!-- Logout option -->
+                {% if request.session.user_id %}
+                    <div class="profile-icon">
+                        <i class="fas fa-user-circle"></i>
+                        <!-- Dropdown Content -->
+                        <div class="dropdown-content">
+                            <!-- <span>{{ user.username }}</span> Display username -->
+                        <a href="{% url 'logout' %}">Logout</a> <!-- Logout option -->
+                            
+                        </div>
                     </div>
-                </div>
+                    {% endif %}
             </div>
         </div>
     </nav>
