@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.db import connection
 from django.contrib import messages
-from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 import bcrypt
 from django.http import HttpResponse
+from TrackFolio import utils
 
 def home(request):
     return render (request, 'home.html')
@@ -81,8 +81,9 @@ def dashboard(request):
         """, [user_id])
         portfolios = cursor.fetchall()  # Returns a list of tuples (portfolio_id, name)
 
-    return render(request, 'dashboard.html', {'portfolios': portfolios})
-
+    response = render(request, 'dashboard.html', {'portfolios': portfolios})
+    response = utils.remove_cache(response)
+    return response
 
 def add_portfolio(request):
     user_id = request.session.get('user_id')  # Assuming user ID is stored in session
@@ -109,10 +110,14 @@ def add_portfolio(request):
 
         return redirect('dashboard')  # Redirect to the dashboard after successful creation
 
-    return render(request, 'add_portfolio.html')
-
+    response = render(request, 'add_portfolio.html')
+    response = utils.remove_cache(response)
+    return response
 
 def portfolio(request, portfolio_id):
+
+    if 'user_id' not in request.session:
+        return redirect('login')
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM portfolio WHERE portfolio_id = %s", [portfolio_id])
         portfolio = cursor.fetchone()  # Returns a single tuple (id, name, type) or None
@@ -134,10 +139,13 @@ def portfolio(request, portfolio_id):
         'holdings' : holdings
     }
 
-    return render(request, 'portfolio.html', context)
-
+    response = render(request, 'portfolio.html', context)
+    response = utils.remove_cache(response)
+    return response
 
 def delete_portfolio(request, portfolio_id):
+    if 'user_id' not in request.session:
+        return redirect('login')
     with connection.cursor() as cursor:
         cursor.execute("DELETE FROM transaction WHERE portfolio_id = %s", [portfolio_id])
         cursor.execute("DELETE FROM holding WHERE portfolio_id = %s", [portfolio_id])
@@ -145,11 +153,8 @@ def delete_portfolio(request, portfolio_id):
 
     return redirect('dashboard')  # Redirect to the list view
 
-
-
 def add_transaction(request, portfolio_id):
-    user_id = request.session.get('user_id')  # Assuming user ID is stored in session
-    if not user_id:
+    if 'user_id' not in request.session:    
         return redirect('login')
     
     with connection.cursor() as cursor:
@@ -228,10 +233,13 @@ def add_transaction(request, portfolio_id):
         'stocks' : stocks,
         'holdings' : holdings}    #context part of render function cannot pass integer but only dictionary.
 
-    return render(request, 'add_transaction.html', context=context)
-
+    response = render(request, 'add_transaction.html', context=context)
+    response = utils.remove_cache(response)
+    return response
 
 def delete_transaction(request, portfolio_id, transaction_id):
+    if 'user_id' not in request.session:
+        return redirect('login')
     with connection.cursor() as cursor:
         cursor.execute("DELETE FROM transaction WHERE portfolio_id = %s and transaction_id = %s", [portfolio_id, transaction_id])
 
@@ -248,8 +256,10 @@ def view_transaction(request, portfolio_id, transaction_id):
         'portfolio_id': portfolio_id,
         'transaction': transaction
     }
-    return render(request, 'view_transaction.html', context=context)   #passing transaction to view_transaction.html 
+    response = render(request, 'view_transaction.html', context=context)   #passing transaction to view_transaction.html 
+    response = utils.remove_cache(response)
+    return response
 
-def logout_view(request):
-    logout(request)
+def logout(request):
+    request.session.flush()
     return redirect('login')
