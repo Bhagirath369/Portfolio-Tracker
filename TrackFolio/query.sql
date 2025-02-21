@@ -15,7 +15,7 @@ create table if not exists portfolio (
 	sold_value numeric(50,2),
 	realised_gain numeric(50,2),
 	estimated_loss numeric(50,2),
-	today_gain_or_loss numeric(50,2),
+	total_gain_or_loss numeric(50,2),
 	type varchar(15) not null
 );
 
@@ -44,7 +44,7 @@ create table if not exists holding (
     total_investment numeric(50,2),
     ltp numeric(10,2),
     current_value numeric(50,2),
-    today_profit_loss numeric(50,2),
+    total_profit_loss numeric(50,2),
     net_receivable_ammount numeric(50,2),
 	wacc numeric(10,2),
     sold_value numeric(10,2),
@@ -129,7 +129,7 @@ BEGIN
         SET
             wacc = (total_investment / NULLIF(total_quantity, 0)),
             current_value = total_quantity * stock_ltp,
-            today_profit_loss = current_value - total_investment, -- Assumed P&L calculation
+            total_profit_loss = current_value - total_investment, -- Assumed P&L calculation
             net_receivable_ammount = sold_value - total_investment
         WHERE portfolio_id = NEW.portfolio_id AND script = NEW.script;
 
@@ -141,7 +141,7 @@ BEGIN
     ELSE
         -- Insert new stock for valid transactions
         IF NEW.transaction_type IN ('IPO', 'BUY', 'FPO', 'RIGHT', 'AUCTION', 'DIVIDENT', 'BONUS') THEN
-            INSERT INTO holding (portfolio_id, script, sector, total_quantity, total_investment, wacc, ltp, current_value, today_profit_loss, net_receivable_ammount, sold_value, realised_gain)
+            INSERT INTO holding (portfolio_id, script, sector, total_quantity, total_investment, wacc, ltp, current_value, total_profit_loss, net_receivable_ammount, sold_value, realised_gain)
             VALUES (
                 NEW.portfolio_id,
                 NEW.script,
@@ -151,7 +151,7 @@ BEGIN
                 NEW.net_ammount / NULLIF(NEW.quantity, 0),
                 stock_ltp,
                 NEW.quantity * stock_ltp,
-                NULL, -- Cannot calculate today P&L initially
+                NEW.quantity * stock_ltp - NEW.net_ammount,
                 NEW.quantity * stock_ltp,
                 0,  -- Sold value initially 0
                 0   -- Realized gain initially 0
@@ -210,7 +210,7 @@ EXECUTE FUNCTION recalculate_holding_after_delete();
 
 --function to update portfolio table when holding is updated
 CREATE OR REPLACE FUNCTION update_portfolio_table_after_add()
-RETURNS TRIGGER AS 
+RETURNS TRIGGER AS
 $$
 BEGIN
     -- Ensure portfolio exists
@@ -221,7 +221,7 @@ BEGIN
         SET
             total_investment = (SELECT COALESCE(SUM(total_investment), 0) FROM holding WHERE portfolio_id = NEW.portfolio_id),
             current_value = (SELECT COALESCE(SUM(current_value), 0) FROM holding WHERE portfolio_id = NEW.portfolio_id),
-            today_gain_or_loss = (SELECT COALESCE(SUM(today_profit_loss), 0) FROM holding WHERE portfolio_id = NEW.portfolio_id),
+            total_gain_or_loss = (SELECT COALESCE(SUM(total_profit_loss), 0) FROM holding WHERE portfolio_id = NEW.portfolio_id),
             sold_value = (SELECT COALESCE(SUM(sold_value), 0) FROM holding WHERE portfolio_id = NEW.portfolio_id),
             realised_gain = (
                 SELECT COALESCE(SUM(ABS(sold_value - (total_quantity * wacc))), 0)
@@ -257,7 +257,7 @@ BEGIN
         SET
             total_investment = (SELECT COALESCE(SUM(total_investment), 0) FROM holding WHERE portfolio_id = OLD.portfolio_id),
             current_value = (SELECT COALESCE(SUM(current_value), 0) FROM holding WHERE portfolio_id = OLD.portfolio_id),
-            today_gain_or_loss = (SELECT COALESCE(SUM(today_profit_loss), 0) FROM holding WHERE portfolio_id = OLD.portfolio_id)
+            total_gain_or_loss = (SELECT COALESCE(SUM(total_profit_loss), 0) FROM holding WHERE portfolio_id = OLD.portfolio_id)
         WHERE portfolio_id = OLD.portfolio_id;
     
     END IF;
